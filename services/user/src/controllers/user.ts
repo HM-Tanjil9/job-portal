@@ -23,3 +23,28 @@ export const getUserProfile = TryCatch(async (req, res) => {
   user.skills = user?.skills || [];
   res.json(user);
 });
+
+export const userUpdateProfile = TryCatch(
+  async (req: AuthenticatedRequest, res) => {
+    const user = req.user;
+    if (!user) {
+      throw new ErrorHandler(401, "Authentication required");
+    }
+    const { name, phone_number, bio } = req.body;
+    const newName = name || user.name;
+    const newPhoneNumber = phone_number || user.phone_number;
+    const newBio = bio || user.bio;
+
+    const [updatedUser] = await sql`
+      UPDATE users
+      SET name = ${newName}, phone_number = ${newPhoneNumber}, bio = ${newBio}
+      WHERE user_id = ${user.user_id}
+      RETURNING user_id, name, email, phone_number, bio
+    `;
+
+    res.json({
+      message: "Profile updated successfully",
+      updatedUser,
+    });
+  },
+);
