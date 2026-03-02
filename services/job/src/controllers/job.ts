@@ -79,3 +79,56 @@ export const deleteCompany = TryCatch(
     });
   },
 );
+
+export const createJob = TryCatch(async (req: AuthenticatedRequest, res) => {
+  const user = req.user;
+  console.log(user);
+  if (!user) {
+    throw new ErrorHandler(401, "Authentication required");
+  }
+  if (user.role !== "recruiter") {
+    throw new ErrorHandler(
+      403,
+      "Forbidden: Only recruiters can create company",
+    );
+  }
+  console.log(req.body);
+  const {
+    title,
+    description,
+    salary,
+    location,
+    job_type,
+    openings,
+    role,
+    work_location,
+    company_id,
+  } = req.body;
+  if (
+    !title ||
+    !description ||
+    !salary ||
+    !location ||
+    !job_type ||
+    !openings ||
+    !role ||
+    !work_location ||
+    !company_id
+  ) {
+    throw new ErrorHandler(400, "All fields are required");
+  }
+
+  const [company] = await sql`
+    SELECT company_id FROM companies WHERE company_id = ${company_id} AND recruiter_id = ${user.user_id}
+  `;
+  if (!company) {
+    throw new ErrorHandler(404, "Company not found");
+  }
+
+  const [newJob] = await sql`
+    INSERT INTO jobs (title, description, salary, location, job_type, openings, role, work_location, company_id, posted_by_recruiter_id)
+    VALUES (${title}, ${description}, ${salary}, ${location}, ${job_type}, ${openings}, ${role}, ${work_location}, ${company_id}, ${user.user_id})
+    RETURNING *
+  `;
+  res.json({ message: "Job posted successfully", job: newJob });
+});
