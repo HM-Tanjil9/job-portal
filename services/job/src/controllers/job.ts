@@ -51,3 +51,31 @@ export const createCompany = TryCatch(
     res.json({ message: "Company created successfully", company: newCompany });
   },
 );
+
+export const deleteCompany = TryCatch(
+  async (req: AuthenticatedRequest, res) => {
+    const user = req.user;
+    if (!user) {
+      throw new ErrorHandler(401, "Authentication required");
+    }
+    const { companyId } = req.params;
+    if (!companyId) {
+      throw new ErrorHandler(400, "Company ID is required");
+    }
+    const [company] = await sql`
+      SELECT logo_public_id FROM companies WHERE company_id = ${companyId} AND recruiter_id = ${user.user_id}
+    `;
+    if (!company) {
+      throw new ErrorHandler(
+        404,
+        "Company not found or you are not authorized to delete it",
+      );
+    }
+    await sql`
+      DELETE FROM companies WHERE company_id = ${companyId}
+    `;
+    res.json({
+      message: "Company and all associated jobs deleted successfully",
+    });
+  },
+);
