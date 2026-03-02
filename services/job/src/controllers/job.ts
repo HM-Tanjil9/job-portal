@@ -82,7 +82,6 @@ export const deleteCompany = TryCatch(
 
 export const createJob = TryCatch(async (req: AuthenticatedRequest, res) => {
   const user = req.user;
-  console.log(user);
   if (!user) {
     throw new ErrorHandler(401, "Authentication required");
   }
@@ -92,7 +91,6 @@ export const createJob = TryCatch(async (req: AuthenticatedRequest, res) => {
       "Forbidden: Only recruiters can create company",
     );
   }
-  console.log(req.body);
   const {
     title,
     description,
@@ -131,4 +129,69 @@ export const createJob = TryCatch(async (req: AuthenticatedRequest, res) => {
     RETURNING *
   `;
   res.json({ message: "Job posted successfully", job: newJob });
+});
+
+export const updateJob = TryCatch(async (req: AuthenticatedRequest, res) => {
+  const user = req.user;
+  if (!user) {
+    throw new ErrorHandler(401, "Authentication required");
+  }
+  if (user.role !== "recruiter") {
+    throw new ErrorHandler(
+      403,
+      "Forbidden: Only recruiters can create company",
+    );
+  }
+  const jobId = req.params.jobId;
+  const {
+    title,
+    description,
+    salary,
+    location,
+    job_type,
+    openings,
+    role,
+    work_location,
+    company_id,
+    is_active,
+  } = req.body;
+  if (
+    !title ||
+    !description ||
+    !salary ||
+    !location ||
+    !job_type ||
+    !openings ||
+    !role ||
+    !work_location ||
+    !company_id
+  ) {
+    throw new ErrorHandler(400, "All fields are required");
+  }
+  const [existingJob] = await sql`
+    SELECT posted_by_recruiter_id FROM jobs WHERE job_id = ${jobId}
+  `;
+  if (!existingJob) {
+    throw new ErrorHandler(404, "Job not found");
+  }
+  if (existingJob.posted_by_recruiter_id !== user.user_id) {
+    throw new ErrorHandler(403, "Forbidden: Only recruiters can update jobs");
+  }
+  const [updatedJob] = await sql`
+    UPDATE jobs
+    SET
+      title = ${title},
+      description = ${description},
+      salary = ${salary},
+      location = ${location},
+      job_type = ${job_type},
+      openings = ${openings},
+      role = ${role},
+      work_location = ${work_location},
+      company_id = ${company_id},
+      is_active = ${is_active}
+    WHERE job_id = ${jobId}
+    RETURNING *
+  `;
+  res.json({ message: "Job updated successfully", job: updatedJob });
 });
