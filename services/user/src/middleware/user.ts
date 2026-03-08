@@ -14,7 +14,7 @@ interface User {
   profile_pic: string | null;
   profile_pic_public_id: string | null;
   skills: string[];
-  subscription: string[];
+  subscription: Date | string | null;
 }
 
 export interface AuthenticatedRequest extends Request {

@@ -1,7 +1,9 @@
 import app from "./app.js";
 import dotenv from "dotenv";
 import sql from "./utils/db.js";
+import { connectKafka } from "./producer.js";
 dotenv.config();
+connectKafka();
 
 async function initDB() {
   try {
