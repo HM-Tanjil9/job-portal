@@ -1,12 +1,10 @@
-import { Button } from "@/components/ui/button";
+import Hero from "@/components/hero";
 import React from "react";
 
 function Home() {
   return (
     <div>
-      <Button variant={"destructive"} size={"xs"}>
-        Test Button extra chis
-      </Button>
+      <Hero />
     </div>
   );
 }
