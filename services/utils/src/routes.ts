@@ -162,6 +162,8 @@ router.post("/resume-analyser", async (req, res) => {
           parts: [
             {
               text: prompt,
+            },
+            {
               inlineData: {
                 mimeType: "application/pdf",
                 data: pdfBase64.replace(/^data:application\/pdf;base64,/, ""),
