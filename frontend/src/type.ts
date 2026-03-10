@@ -1,0 +1,28 @@
+export interface JobOptions {
+  title: string;
+  responsibilities: string;
+  why: string;
+}
+export interface SkillsToLearn {
+  title: string;
+  why: string;
+  how: string;
+}
+
+export interface SkillCategory {
+  category: string;
+  skills: SkillsToLearn[];
+}
+
+export interface LearningApproach {
+  title: string;
+  points: string[];
+}
+export interface CarrierGuideResponse {
+  summary: string;
+  jobOptions: JobOptions[];
+  skillsToLearn: SkillCategory[];
+  learningApproach: LearningApproach;
+}
+
+export const utils_service = "http://localhost:5001";
