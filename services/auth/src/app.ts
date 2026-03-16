@@ -1,9 +1,11 @@
 import express from "express";
 import authRoutes from "./routes/auth.js";
 import { connectKafka } from "./producer.js";
+import cors from "cors";
 
 const app = express();
 connectKafka();
 app.use(express.json());
-app.use("/auth", authRoutes);
+app.use(cors());
+app.use("/api/auth", authRoutes);
 export default app;

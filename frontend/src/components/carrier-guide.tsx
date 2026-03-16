@@ -1,5 +1,5 @@
 "use client";
-import { CarrierGuideResponse, utils_service } from "@/type";
+import { CarrierGuideResponse } from "@/type";
 import {
   ArrowRight,
   BookOpen,
@@ -24,6 +24,8 @@ import {
 import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
+import { utils_service } from "@/context/AppContext";
+import toast from "react-hot-toast";
 
 function CarrierGuide() {
   const [open, setOpen] = useState(false);
@@ -48,7 +50,7 @@ function CarrierGuide() {
   };
   const getCarrierGuidance = async () => {
     if (skills.length === 0) {
-      alert("Please add at least one skill");
+      toast.error("Please add at least one skill");
       return;
     }
     setLoading(true);
@@ -57,9 +59,9 @@ function CarrierGuide() {
         skills: skills,
       });
       setResponse(data);
-      alert("Carrier guidance generated successfully");
+      toast.success("Carrier guidance generated successfully");
     } catch (error: any) {
-      alert(error.response.data.message);
+      toast.error(error.response.data.message);
     } finally {
       setLoading(false);
     }
