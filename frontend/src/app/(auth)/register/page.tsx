@@ -270,7 +270,7 @@ function RegisterPage() {
                 className="text-blue-500 hover:underline font-medium transition-all"
               >
                 Login
-              </Link>{" "}
+              </Link>
             </p>
           </div>
         </div>
