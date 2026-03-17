@@ -79,7 +79,7 @@ export const registerUser = TryCatch(async (req, res, next) => {
 
   res.status(201).json({
     message: "User registered successfully",
-    user: registeredUser,
+    registeredUser,
     token,
   });
 });

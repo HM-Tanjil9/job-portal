@@ -10,6 +10,7 @@ import { ArrowRight, EyeIcon, EyeOffIcon, Lock, Mail } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import Loading from "@/components/loading";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -41,6 +42,9 @@ function LoginPage() {
       setBtnLoading(false);
     }
   };
+  if (loading) {
+    return <Loading />;
+  }
   if (isAuth) return redirect("/");
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12">

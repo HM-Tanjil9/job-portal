@@ -1,0 +1,27 @@
+session_name: job-portal
+start_directory: ~/Developer/job-portal
+windows:
+  - window_name: frontend
+    start_directory: frontend
+    panes:
+      - echo "📁 Frontend - Ready"
+  - window_name: auth
+    start_directory: services/auth
+    panes:
+      - echo "🔐 Auth - Ready"
+  - window_name: job
+    start_directory: services/job
+    panes:
+      - echo "💼 Job - Ready"
+  - window_name: user
+    start_directory: services/user
+    panes:
+      - echo "👤 User - Ready"
+  - window_name: utils
+    start_directory: services/utils
+    panes:
+      - echo "🛠️ Utils - Ready"
+  - window_name: root
+    start_directory: .
+    panes:
+      - echo "📂 Root - Ready"
