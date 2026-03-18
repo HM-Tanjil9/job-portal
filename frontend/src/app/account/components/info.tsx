@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { useAppData } from "@/context/AppContext";
 import { AccountProps } from "@/type";
 import {
@@ -25,7 +26,7 @@ const Info: React.FC<AccountProps> = ({ user, isYourAccount }) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [bio, setBio] = useState("");
 
-  const { updateProfilePic } = useAppData();
+  const { updateProfilePic, updateResume } = useAppData();
 
   const handleClick = () => {
     inputRef.current?.click();
@@ -46,6 +47,9 @@ const Info: React.FC<AccountProps> = ({ user, isYourAccount }) => {
   };
 
   const updateProfileHandler = () => {};
+  const handleResumeClick = () => {
+    resumeRef.current?.click();
+  };
   const changeResume = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -54,6 +58,7 @@ const Info: React.FC<AccountProps> = ({ user, isYourAccount }) => {
       }
       const formData = new FormData();
       formData.append("file", file);
+      updateResume(formData);
     }
   };
   return (
@@ -169,6 +174,21 @@ const Info: React.FC<AccountProps> = ({ user, isYourAccount }) => {
                   </Link>
                 </div>
                 {/* edit pdf */}
+                <Button
+                  variant={"outline"}
+                  size={"sm"}
+                  onClick={handleResumeClick}
+                  className="gap-2"
+                >
+                  Update
+                </Button>
+                <input
+                  className="hidden"
+                  type="file"
+                  ref={resumeRef}
+                  accept="application/pdf"
+                  onChange={changeResume}
+                />
               </div>
             </div>
           )}

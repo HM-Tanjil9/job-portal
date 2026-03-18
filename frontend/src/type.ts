@@ -86,6 +86,7 @@ export interface AppContextType {
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   logoutUser: () => Promise<void>;
   updateProfilePic: (formData: any) => Promise<void>;
+  updateResume: (formData: any) => Promise<void>;
 }
 
 export interface AppProviderProps {
