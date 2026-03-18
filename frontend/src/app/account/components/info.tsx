@@ -1,8 +1,11 @@
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useAppData } from "@/context/AppContext";
 import { AccountProps } from "@/type";
 import {
   BookUser,
   Briefcase,
+  Camera,
   FileText,
   FileUser,
   Mail,
@@ -11,9 +14,48 @@ import {
   Phone,
 } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+import React, { ChangeEvent, useRef, useState } from "react";
 
 const Info: React.FC<AccountProps> = ({ user, isYourAccount }) => {
+  const [btnLoading, setBtnLoading] = useState(false);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const editRef = useRef<HTMLInputElement | null>(null);
+  const resumeRef = useRef<HTMLInputElement | null>(null);
+  const [name, setName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [bio, setBio] = useState("");
+
+  const { updateProfilePic } = useAppData();
+
+  const handleClick = () => {
+    inputRef.current?.click();
+  };
+  const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      updateProfilePic(formData);
+    }
+  };
+  const handleEditClick = () => {
+    editRef.current?.click();
+    setName(user?.name || "");
+    setPhoneNumber(user?.phone_number || "");
+    setBio(user?.bio || "");
+  };
+
+  const updateProfileHandler = () => {};
+  const changeResume = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.type !== "application/pdf") {
+        return alert("Please select a PDF file");
+      }
+      const formData = new FormData();
+      formData.append("file", file);
+    }
+  };
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
       <Card className="overflow-hidden shadow-lg border-2">
@@ -31,7 +73,26 @@ const Info: React.FC<AccountProps> = ({ user, isYourAccount }) => {
                   className="w-full h-ful object-cover"
                 />
               </div>
-              {/* Edit option for own */}
+              {/* Edit option for profile pic */}
+              {isYourAccount && (
+                <>
+                  <Button
+                    variant={"secondary"}
+                    size={"icon"}
+                    onClick={handleClick}
+                    className="absolute bottom-0 right-0 rounded-full h-10 w-10 shadow-lg"
+                  >
+                    <Camera size={18} />
+                  </Button>
+                  <input
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    ref={inputRef}
+                    onChange={changeHandler}
+                  />
+                </>
+              )}
             </div>
           </div>
         </div>
