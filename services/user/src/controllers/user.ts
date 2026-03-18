@@ -32,9 +32,9 @@ export const userUpdateProfile = TryCatch(
     if (!user) {
       throw new ErrorHandler(401, "Authentication required");
     }
-    const { name, phone_number, bio } = req.body;
+    const { name, phoneNumber, bio } = req.body;
     const newName = name || user.name;
-    const newPhoneNumber = phone_number || user.phone_number;
+    const newPhoneNumber = phoneNumber || user.phone_number;
     const newBio = bio || user.bio;
 
     const [updatedUser] = await sql`
