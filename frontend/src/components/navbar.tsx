@@ -7,16 +7,19 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { ModeToggle } from "./mode-toggle";
 import { useAppData } from "@/context/AppContext";
+import { useRouter } from "next/navigation";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { isAuth, user, setIsAuth, setUser, loading, logoutUser } =
     useAppData();
+  const router = useRouter();
   const toggleMenu = function () {
     setIsOpen(!isOpen);
   };
   const logoutHandler = () => {
     logoutUser();
+    router.push("/");
   };
   return (
     <nav className="z-50 sticky top-0 bg-background/80 border-b backdrop-blur-md shadow -sm">

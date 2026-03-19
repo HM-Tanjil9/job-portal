@@ -4,6 +4,7 @@ import { useAppData } from "@/context/AppContext";
 import React from "react";
 import Info from "./components/info";
 import { Skills } from "./components/skills";
+import { Company } from "./components/company";
 
 function AccountPage() {
   const { isAuth, user, loading } = useAppData();
@@ -15,6 +16,7 @@ function AccountPage() {
         {user?.role === "jobseeker" && (
           <Skills user={user} isYourAccount={true} />
         )}
+        {user?.role === "recruiter" && <Company />}
       </div>
       ;
     </>
