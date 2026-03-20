@@ -19,7 +19,7 @@ function Navbar() {
   };
   const logoutHandler = () => {
     logoutUser();
-    router.push("/");
+    router.push("/login");
   };
   return (
     <nav className="z-50 sticky top-0 bg-background/80 border-b backdrop-blur-md shadow -sm">
