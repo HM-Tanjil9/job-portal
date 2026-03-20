@@ -18,7 +18,6 @@ function AccountPage() {
         )}
         {user?.role === "recruiter" && <Company />}
       </div>
-      ;
     </>
   );
 }
