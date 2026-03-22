@@ -147,7 +147,7 @@ export const Company = () => {
           </div>
         </div>
         {companyLoading ? (
-          <div className="flex items-center justify-center text-red-400">
+          <div className="flex items-center justify-center text-gray-600">
             Please wait...
           </div>
         ) : (

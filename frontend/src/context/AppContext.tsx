@@ -1,6 +1,6 @@
 "use client";
 
-import { AppContextType, AppProviderProps, User } from "@/type";
+import { AppContextType, Application, AppProviderProps, User } from "@/type";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import Cookies from "js-cookie";
@@ -18,8 +18,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [isAuth, setIsAuth] = useState(false);
   const [loading, setLoading] = useState(true);
   const [btnLoading, setBtnLoading] = useState(false);
+  const [applications, setApplications] = useState<Application[]>([]); // Changed to array, not null
 
   const token = Cookies.get("token");
+
   async function fetchUser() {
     try {
       const { data } = await axios.get(`${user_service}/api/user/me`, {
@@ -104,6 +106,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     Cookies.set("token", "");
     setUser(null);
     setIsAuth(false);
+    setApplications([]); // Clear applications on logout
     toast.success("Logged out successfully");
   }
 
@@ -148,12 +151,59 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       fetchUser();
     } catch (error: any) {
       toast.error(error.response.data.message);
+    } finally {
+      setBtnLoading(false);
+    }
+  }
+
+  async function applyJob(job_id: number) {
+    setBtnLoading(true);
+    try {
+      const { data } = await axios.post(
+        `${user_service}/api/user/apply/job`,
+        { job_id },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      toast.success(data.message);
+      await fetchApplications();
+    } catch (error: any) {
+      toast.error(error.response.data.message);
+    } finally {
+      setBtnLoading(false);
+    }
+  }
+
+  async function fetchApplications() {
+    if (!token) {
+      setApplications([]);
+      return;
+    }
+
+    try {
+      const { data } = await axios.get(
+        `${user_service}/api/user/application/all`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      setApplications(data.applications);
+    } catch (error: any) {
+      console.error("Fetch applications error:", error);
+      setApplications([]);
     }
   }
 
   useEffect(() => {
     fetchUser();
+    fetchApplications();
   }, []);
+
   return (
     <AppContext.Provider
       value={{
@@ -170,6 +220,9 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         updateUser,
         addSkill,
         removeSkill,
+        applyJob,
+        applications, // Now guaranteed to be an array
+        fetchApplications,
       }}
     >
       {children}

@@ -97,29 +97,7 @@ function RegisterPage() {
               </Label>
               <div className="relative dark:text-white">
                 <Briefcase className="icon-style" />
-                {/* <select
-                  id="role"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  required
-                  className="w-full pl-10 h-11 border-2  border-gray-300 rounded-md bg-transparent dark:text-white"
-                >
-                  <option value="" className="text-gray-500 dark:text-gray-400">
-                    Select your role
-                  </option>
-                  <option
-                    value="jobseeker"
-                    className="text-gray-900 dark:text-white"
-                  >
-                    Find a job
-                  </option>
-                  <option
-                    value="recruiter"
-                    className="text-gray-900 dark:text-white"
-                  >
-                    Hire talent
-                  </option>
-                </select> */}
+
                 <Select value={role} onValueChange={setRole}>
                   <SelectTrigger className="w-full pl-10 h-11 border-2  border-gray-300 rounded-md bg-transparent">
                     <SelectValue placeholder="Select your role" />

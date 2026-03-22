@@ -18,7 +18,8 @@ function LoginPage() {
   const [btnLoading, setBtnLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
-  const { isAuth, setUser, loading, setIsAuth } = useAppData();
+  const { isAuth, setUser, loading, setIsAuth, fetchApplications } =
+    useAppData();
   const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setBtnLoading(true);
@@ -35,6 +36,7 @@ function LoginPage() {
       });
       setUser(data.userObject);
       setIsAuth(true);
+      fetchApplications();
     } catch (error: any) {
       toast.error(error.response.data.message);
       setIsAuth(false);
