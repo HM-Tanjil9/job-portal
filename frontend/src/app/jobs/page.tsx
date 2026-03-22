@@ -36,7 +36,7 @@ const locations: string[] = [
   "Rangpur",
   "Mymensingh",
 ];
-const JobPage = () => {
+const JobsPage = () => {
   const [loading, setLoading] = useState(true);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [title, setTitle] = useState("");
@@ -215,4 +215,4 @@ const JobPage = () => {
   );
 };
 
-export default JobPage;
+export default JobsPage;

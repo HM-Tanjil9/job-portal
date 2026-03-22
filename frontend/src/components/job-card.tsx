@@ -19,10 +19,10 @@ interface JobCardProps {
 }
 const JobCard: React.FC<JobCardProps> = ({ job }) => {
   const { user, btnLoading, applyJob, applications } = useAppData();
-  const [applied, setApplied] = useState(false);
   const applyJobHandler = async (id: number) => {
     applyJob(id);
   };
+  const [applied, setApplied] = useState(false);
   useEffect(() => {
     if (applications && job.job_id) {
       applications.forEach((item: Application) => {
