@@ -252,8 +252,8 @@ const Info: React.FC<AccountProps> = ({ user, isYourAccount }) => {
                         </div>
                       </>
                     ) : new Date(user?.subscription).getTime() > Date.now() ? (
-                      <div className="flex items-center justify-center flex-wrap gap-4">
-                        <div>
+                      <div className="flex items-center justify-between flex-wrap gap-4">
+                        <div className="">
                           <div className="flex items-center gap-2 mb-2">
                             <CheckCircle2
                               size={20}

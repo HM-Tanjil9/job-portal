@@ -59,8 +59,8 @@ export const checkOut = TryCatch(async (req: AuthenticatedRequest, res) => {
     total_amount: totalAmount,
     currency: "BDT",
     tran_id: tran_id,
-    success_url: `${process.env.FRONTEND_URL}/payment/success/${tran_id}`,
-    fail_url: `${process.env.FRONTEND_URL}/api/payment/fail`,
+    success_url: `${process.env.BASE_URL}/api/payment/success`,
+    fail_url: `${process.env.BASE_URL}/api/payment/fail`,
     cancel_url: `${process.env.BASE_URL}/api/payment/cancel`,
     ipn_url: `${process.env.BASE_URL}/api/payment/ipn`,
     shipping_method: "No",
@@ -80,9 +80,6 @@ export const checkOut = TryCatch(async (req: AuthenticatedRequest, res) => {
     value_c: totalAmount.toString(),
     value_d: subscriptionDays.toString(),
   };
-
-  console.log(`Processing payment for user: ${user?.email} (ID: ${user_id})`);
-  console.log(`Transaction ID: ${tran_id}`);
 
   try {
     const apiResponse = await instance.init(paymentData);
@@ -117,33 +114,23 @@ export const checkOut = TryCatch(async (req: AuthenticatedRequest, res) => {
 });
 
 export const paymentVerification = TryCatch(
-  async (req: AuthenticatedRequest | Request, res: Response) => {
-    // 🔍 Log everything for debugging
-    console.log("\n" + "=".repeat(60));
+  async (req: Request, res: Response) => {
     console.log("🔔 PAYMENT VERIFICATION CALLED");
     console.log("📦 Request body:", JSON.stringify(req.body, null, 2));
-    console.log("🔑 Has auth:", !!(req as AuthenticatedRequest).user);
-    console.log("=".repeat(60) + "\n");
 
-    // Get payment data from SSLCommerz
+    const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
+
+    // Get payment data from SSLCommerz POST
     const { val_id, tran_id, status } = req.body;
 
-    // Validate required fields
-    if (!val_id || !tran_id) {
-      return res.status(400).json({
-        success: false,
-        message: "Missing required payment information",
+    // If missing fields or invalid status, redirect to frontend with error
+    if (!val_id || !tran_id || status !== "VALID") {
+      console.error("❌ Invalid payment:", { val_id, tran_id, status });
+      const params = new URLSearchParams({
+        status: "failed",
+        tran_id: tran_id || "unknown",
       });
-    }
-
-    // Check payment status
-    if (status !== "VALID") {
-      console.error("❌ Invalid payment status:", status);
-      return res.status(400).json({
-        success: false,
-        message: "Invalid payment status",
-        status: status,
-      });
+      return res.redirect(`${FRONTEND_URL}/payment/failed?${params}`);
     }
 
     try {
@@ -151,55 +138,32 @@ export const paymentVerification = TryCatch(
       const validation = await instance.validate({ val_id });
       console.log("✅ Validation response:", validation);
 
-      // ✅ FIX: Accept both VALID and VALIDATED
       if (validation.status !== "VALID" && validation.status !== "VALIDATED") {
         console.error("❌ Payment validation failed:", validation);
-        return res.status(400).json({
-          success: false,
-          message: "Payment validation failed",
-          error: validation,
+        const params = new URLSearchParams({
+          status: "failed",
+          tran_id: tran_id,
         });
+        return res.redirect(`${FRONTEND_URL}/payment/failed?${params}`);
       }
 
-      // Check if already validated (from IPN)
-      const isAlreadyValidated = validation.status === "VALIDATED";
-      if (isAlreadyValidated) {
-        console.log("⚠️ Payment already validated (IPN likely processed this)");
-      }
-
-      // Get user_id - either from auth or from validation response
-      let user_id: number;
-      const isAuthenticated = (req as AuthenticatedRequest).user !== undefined;
-
-      if (isAuthenticated) {
-        const authReq = req as AuthenticatedRequest;
-        if (!authReq.user) {
-          return res.status(401).json({
-            success: false,
-            message: "No valid user",
-          });
-        }
-        user_id = authReq.user.user_id;
-        console.log("🔐 User from auth:", user_id);
-      } else {
-        user_id = validation.value_a ? parseInt(validation.value_a) : 0;
-        if (!user_id) {
-          console.error("❌ User ID not found in validation response");
-          return res.status(400).json({
-            success: false,
-            message: "User ID not found in payment data",
-          });
-        }
-        console.log("🌐 User from validation:", user_id);
-      }
-
-      // Get subscription details from validation
+      // Extract user_id and subscription details from value_a/c/d
+      const user_id = validation.value_a ? parseInt(validation.value_a) : 0;
       const subscriptionDays = validation.value_d
         ? parseInt(validation.value_d)
         : 1;
       const amount = validation.value_c ? parseFloat(validation.value_c) : 0;
 
-      // Check if subscription already exists and is active
+      if (!user_id) {
+        console.error("❌ User ID not found in validation response");
+        const params = new URLSearchParams({
+          status: "failed",
+          tran_id: tran_id,
+        });
+        return res.redirect(`${FRONTEND_URL}/payment/failed?${params}`);
+      }
+
+      // Check current subscription
       const [currentUser] = await sql`
         SELECT subscription FROM users WHERE user_id = ${user_id}
       `;
@@ -210,43 +174,19 @@ export const paymentVerification = TryCatch(
       const now = Date.now();
       const hasActiveSubscription = currentSubTime > now;
 
-      // If already validated, check if subscription is already updated
-      if (isAlreadyValidated && hasActiveSubscription) {
-        console.log("✅ Subscription already active, returning current status");
-
-        // Get updated user data
-        const [updatedUser] = await sql`
-          SELECT user_id, name, email, subscription FROM users WHERE user_id = ${user_id}
-        `;
-
-        return res.status(200).json({
-          success: true,
-          message: "Payment already processed successfully",
-          already_processed: true,
-          transaction_id: tran_id,
-          amount: amount,
-          subscription_days: subscriptionDays,
-          expiry_date: updatedUser?.subscription,
-          is_extension: hasActiveSubscription,
-          user: updatedUser,
-        });
-      }
-
       let expiryDate: Date;
 
       if (hasActiveSubscription) {
-        // Extend existing subscription
         expiryDate = new Date(currentSubTime);
         expiryDate.setDate(expiryDate.getDate() + subscriptionDays);
         console.log(`🔄 Extending subscription by ${subscriptionDays} days`);
       } else {
-        // New subscription
         expiryDate = new Date();
         expiryDate.setDate(expiryDate.getDate() + subscriptionDays);
         console.log(`✨ New subscription for ${subscriptionDays} days`);
       }
 
-      // Update user's subscription in database (only if not already updated)
+      // Update subscription in DB
       const [updatedUser] = await sql`
         UPDATE users 
         SET subscription = ${expiryDate}
@@ -256,45 +196,37 @@ export const paymentVerification = TryCatch(
 
       if (!updatedUser) {
         console.error("❌ User not found with ID:", user_id);
-        return res.status(404).json({
-          success: false,
-          message: "User not found",
+        const params = new URLSearchParams({
+          status: "failed",
+          tran_id: tran_id,
         });
+        return res.redirect(`${FRONTEND_URL}/payment/failed?${params}`);
       }
 
-      // Log success
       console.log(`✅ Payment successful for user: ${updatedUser.email}`);
       console.log(`   Transaction ID: ${tran_id}`);
       console.log(`   Amount: ${amount} BDT`);
       console.log(`   Days: ${subscriptionDays}`);
       console.log(`   Expires: ${expiryDate}`);
-      console.log(`   Type: ${hasActiveSubscription ? "Extension" : "New"}`);
 
-      // Return success response
-      return res.status(200).json({
-        success: true,
-        message: hasActiveSubscription
-          ? "Subscription extended successfully"
-          : "Subscription purchased successfully",
-        transaction_id: tran_id,
-        amount: amount,
-        subscription_days: subscriptionDays,
-        expiry_date: expiryDate,
-        is_extension: hasActiveSubscription,
-        user: {
-          id: updatedUser.user_id,
-          name: updatedUser.name,
-          email: updatedUser.email,
-          subscription_expiry: updatedUser.subscription,
-        },
+      // Redirect to frontend success page with details
+      const params = new URLSearchParams({
+        status: "success",
+        amount: amount.toString(),
+        days: subscriptionDays.toString(),
+        expiry: expiryDate.toISOString(),
       });
+
+      return res.redirect(
+        `${FRONTEND_URL}/payment/${encodeURIComponent(tran_id)}?${params}`,
+      );
     } catch (error: any) {
       console.error("❌ Payment verification error:", error);
-      return res.status(500).json({
-        success: false,
-        message: "Payment verification failed",
-        error: error.message || "Internal server error",
+      const params = new URLSearchParams({
+        status: "failed",
+        tran_id: tran_id || "unknown",
       });
+      return res.redirect(`${FRONTEND_URL}/payment/failed?${params}`);
     }
   },
 );

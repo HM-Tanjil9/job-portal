@@ -67,7 +67,7 @@ const SubscriptionPage = () => {
             onSuccess: (response: any) => {
               console.log("Payment Success:", response);
               // Redirect to success page
-              router.push(`/payment/success?tran_id=${response.tran_id}`);
+              router.push(`/payment/success/${response.tran_id}?status=success`);
             },
             onFailure: (response: any) => {
               console.log("Payment Failed:", response);
