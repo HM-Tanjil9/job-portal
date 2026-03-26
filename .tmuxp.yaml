@@ -21,6 +21,10 @@ windows:
     start_directory: services/utils
     panes:
       - echo "🛠️ Utils - Ready"
+  - window_name: payment
+    start_directory: services/payment
+    panes:
+      - echo "💰️ payment - Ready"
   - window_name: root
     start_directory: .
     panes:
