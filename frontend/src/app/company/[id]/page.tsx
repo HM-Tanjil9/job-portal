@@ -11,7 +11,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Briefcase,
-  Building,
   Building2,
   CheckCircle,
   Clock,
@@ -24,7 +23,6 @@ import {
   Pencil,
   Plus,
   Receipt,
-  Trash2,
   Users,
   XCircle,
 } from "lucide-react";
@@ -50,13 +48,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+interface CompanyWithWebsite extends Company {
+  website_url?: string;
+}
 const CompanyPage = () => {
   const { id } = useParams();
   const token = Cookies.get("token");
   const { user, isAuth } = useAppData();
   const [loading, setLoading] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false);
-  const [company, setCompany] = useState<Company | null>(null);
+  const [company, setCompany] = useState<CompanyWithWebsite | null>(null);
   async function fetchCompany() {
     try {
       setLoading(true);
@@ -227,7 +228,7 @@ const CompanyPage = () => {
                   </p>
                 </div>
                 <Link
-                  href={company.website_url}
+                  href={company.website_url || "#"}
                   target="_blank"
                   className="md:mb-4"
                 >

@@ -30,7 +30,7 @@ function LoginPage() {
       });
       toast.success(data.message);
       Cookies.set("token", data.token, {
-        secure: true,
+        secure: false,
         expires: 15,
         path: "/",
       });

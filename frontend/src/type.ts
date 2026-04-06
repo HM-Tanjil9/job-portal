@@ -137,6 +137,7 @@ export interface Company {
   jobs?: Job[];
 }
 
+
 type ApplicationStatus = "Submitted" | "Rejected" | "Hired";
 
 export interface Application {

@@ -30,6 +30,10 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
+interface CompanyWithWebsite extends CompanyType {
+  website_url?: string;
+}
+
 export const Company = () => {
   const { loading } = useAppData();
   const addRef = useRef<HTMLButtonElement | null>(null);
@@ -41,7 +45,7 @@ export const Company = () => {
   const [website, setWebsite] = useState("");
   const [logo, setLogo] = useState<File | null>(null);
   const [btnLoading, setBtnLoading] = useState(false);
-  const [companies, setCompanies] = useState<CompanyType[]>([]);
+  const [companies, setCompanies] = useState<CompanyWithWebsite[]>([]);
 
   const token = Cookies.get("token");
 
@@ -154,7 +158,7 @@ export const Company = () => {
           <div className="p-6">
             {companies?.length > 0 ? (
               <div className="grid gap-4">
-                {companies.map((c: CompanyType) => (
+                {companies.map((c: CompanyWithWebsite) => (
                   <div
                     key={c.company_id}
                     className="flex items-center gap-4 p-4 rounded-lg border-2 hover:border-blue-500 transition-all bg-background"
