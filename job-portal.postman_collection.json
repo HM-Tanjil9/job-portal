@@ -1,0 +1,1020 @@
+{
+  "info": {
+    "_postman_id": "cfe9dea9-2d99-47df-a694-a4abaf0c0d13",
+    "name": "job-portal",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "17233800"
+  },
+  "item": [
+    {
+      "name": "user",
+      "item": [
+        {
+          "name": "register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Job Three",
+                  "type": "text",
+                  "uuid": "e6d56e2e-d78d-4232-9e84-741c3a44a88d"
+                },
+                {
+                  "key": "email",
+                  "value": "job3test@gmail.com",
+                  "type": "text",
+                  "uuid": "bf554b13-644a-43e4-a0ac-cd50b6bee857"
+                },
+                {
+                  "key": "password",
+                  "value": "123456",
+                  "type": "text",
+                  "uuid": "dc2d9371-a80b-46e9-b853-3d9e6d8f9a98"
+                },
+                {
+                  "key": "phoneNumber",
+                  "value": "0123456789",
+                  "type": "text",
+                  "uuid": "c5a45c23-3b0b-4c24-85a9-adc5427be03a"
+                },
+                {
+                  "key": "role",
+                  "value": "recruiter",
+                  "type": "text",
+                  "uuid": "cb442b76-7dc8-493e-a5e4-9db8c462fa04"
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "7f757ec4-c657-4c2c-8b7d-692388f2cd10",
+                  "src": "/home/tanjil/Downloads/test.pdf",
+                  "disabled": true
+                },
+                {
+                  "key": "bio",
+                  "value": "Business man 2",
+                  "type": "text",
+                  "uuid": "9c8c6e17-d5b4-411a-8340-cbd150e830bd"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{localhost-auth}}/api/auth/register",
+              "host": [
+                "{{localhost-auth}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Parse the login response",
+                  "const response = pm.response.json();",
+                  "",
+                  "// Check different possible token locations",
+                  "let token = null;",
+                  "",
+                  "// Try common token field names based on your API response",
+                  "if (response.token) {",
+                  "    token = response.token;",
+                  "} else if (response.access_token) {",
+                  "    token = response.access_token;",
+                  "} else if (response.data && response.data.token) {",
+                  "    token = response.data.token;",
+                  "} else if (response.authorization) {",
+                  "    token = response.authorization.replace('Bearer ', '');",
+                  "}",
+                  "",
+                  "// Save the token if found",
+                  "if (token) {",
+                  "    // Save to the collection variable (which we can see in your Variables tab)",
+                  "    pm.collectionVariables.set(\"token\", token);",
+                  "    ",
+                  "    // Optional: Also show success message in console",
+                  "    console.log(\"✅ Token updated successfully!\");",
+                  "    console.log(\"Token preview:\", token.substring(0, 20) + \"...\");",
+                  "    ",
+                  "    // Optional: Add a test to confirm",
+                  "    pm.test(\"Token was saved to collection variable\", function() {",
+                  "        pm.expect(pm.collectionVariables.get(\"token\")).to.not.be.empty;",
+                  "    });",
+                  "} else {",
+                  "    console.log(\"❌ No token found in response\");",
+                  "    console.log(\"Full response:\", response);",
+                  "    ",
+                  "    // This will help identify the response structure",
+                  "    if (response) {",
+                  "        console.log(\"Response keys:\", Object.keys(response));",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"rtanjil0@gmail.com\",\n    \"password\": \"123123123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost-auth}}/api/auth/login",
+              "host": [
+                "{{localhost-auth}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "forgot-password",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"test@gmail.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost-auth}}/api/auth/forgot",
+              "host": [
+                "{{localhost-auth}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "forgot"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "reset-password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"password\": \"12345678\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost-auth}}/api/auth/reset/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZ21haWwuY29tIiwidHlwZSI6InJlc2V0LXBhc3N3b3JkIiwiaWF0IjoxNzcyNDI3NDc1LCJleHAiOjE3NzI0MjgzNzV9.lRoEclvabfMpgF5t-5TQjnvYfZgUrDcdsK7hS-vvm84",
+              "host": [
+                "{{localhost-auth}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "reset",
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZ21haWwuY29tIiwidHlwZSI6InJlc2V0LXBhc3N3b3JkIiwiaWF0IjoxNzcyNDI3NDc1LCJleHAiOjE3NzI0MjgzNzV9.lRoEclvabfMpgF5t-5TQjnvYfZgUrDcdsK7hS-vvm84"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "my-profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{localhost-user}}/api/user/me",
+              "host": [
+                "{{localhost-user}}"
+              ],
+              "path": [
+                "api",
+                "user",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "user-profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{localhost-user}}/api/user/5",
+              "host": [
+                "{{localhost-user}}"
+              ],
+              "path": [
+                "api",
+                "user",
+                "5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "user-profile update",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Tanjil Rahman\",\n    \"bio\": \"Boss\",\n    \"phoneNumber\": \"0000000000000\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost-user}}/api/user/update/profile",
+              "host": [
+                "{{localhost-user}}"
+              ],
+              "path": [
+                "api",
+                "user",
+                "update",
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "user-profile-pic update",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "8f73ca9a-6018-4af9-ab7b-a596ec1acd8a",
+                  "src": "/home/tanjil/Downloads/man.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{localhost-user}}/api/user/update/pic",
+              "host": [
+                "{{localhost-user}}"
+              ],
+              "path": [
+                "api",
+                "user",
+                "update",
+                "pic"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "user-resume update",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "ca1fb717-b7a6-4a19-966c-8110707a68a1",
+                  "src": "/home/tanjil/Downloads/test2.pdf"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{localhost-user}}/api/user/update/resume",
+              "host": [
+                "{{localhost-user}}"
+              ],
+              "path": [
+                "api",
+                "user",
+                "update",
+                "resume"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "user-add-skill",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"skillName\": \"Database\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost-user}}/api/user/skill/add",
+              "host": [
+                "{{localhost-user}}"
+              ],
+              "path": [
+                "api",
+                "user",
+                "skill",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "user-delete-skill",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"skillName\": \"Node\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost-user}}/api/user/skill/delete",
+              "host": [
+                "{{localhost-user}}"
+              ],
+              "path": [
+                "api",
+                "user",
+                "skill",
+                "delete"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "apply-job",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"job_id\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost-user}}/api/user/apply/job",
+              "host": [
+                "{{localhost-user}}"
+              ],
+              "path": [
+                "api",
+                "user",
+                "apply",
+                "job"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "application all",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"job_id\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost-user}}/api/user/application/all",
+              "host": [
+                "{{localhost-user}}"
+              ],
+              "path": [
+                "api",
+                "user",
+                "application",
+                "all"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "job",
+      "item": [
+        {
+          "name": "company-create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Microsoft",
+                  "type": "text",
+                  "uuid": "3b8116a2-b8e3-4561-ac2a-94a4069eeda0"
+                },
+                {
+                  "key": "description",
+                  "value": "Wellcome to Microsoft",
+                  "type": "text",
+                  "uuid": "61a72bd3-a1e9-478f-8780-2af555efba0c"
+                },
+                {
+                  "key": "website",
+                  "value": "https://www.microsoft.com/",
+                  "type": "text",
+                  "uuid": "547599be-4e33-48e1-804f-3ed1ae103eed"
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "d595f011-98c8-4369-acaa-6c4d869542ef",
+                  "src": "/home/tanjil/Downloads/google.png"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{localhost-job}}/api/job/company/new",
+              "host": [
+                "{{localhost-job}}"
+              ],
+              "path": [
+                "api",
+                "job",
+                "company",
+                "new"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "company-delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Google",
+                  "type": "text",
+                  "uuid": "3b8116a2-b8e3-4561-ac2a-94a4069eeda0"
+                },
+                {
+                  "key": "description",
+                  "value": "Wellcome to google if you are jobless",
+                  "type": "text",
+                  "uuid": "61a72bd3-a1e9-478f-8780-2af555efba0c"
+                },
+                {
+                  "key": "website",
+                  "value": "https://www.google.com/",
+                  "type": "text",
+                  "uuid": "547599be-4e33-48e1-804f-3ed1ae103eed"
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "d595f011-98c8-4369-acaa-6c4d869542ef",
+                  "src": "/home/tanjil/Downloads/google.png"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{localhost-job}}/api/job/company/2",
+              "host": [
+                "{{localhost-job}}"
+              ],
+              "path": [
+                "api",
+                "job",
+                "company",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create-job",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Full stack Backend Developer\",\n    \"description\": \"Full stack Backend Developer with 4 year of exprerience\",\n    \"salary\": 150000,\n    \"location\": \"Dhaka\",\n    \"role\": \"MERN Stack\",\n    \"job_type\": \"Full-time\",\n    \"work_location\": \"Remote\",\n    \"company_id\": 4,\n    \"openings\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost-job}}/api/job/new",
+              "host": [
+                "{{localhost-job}}"
+              ],
+              "path": [
+                "api",
+                "job",
+                "new"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update-job",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Full stack Backend Engineer\",\n    \"description\": \"Full stack Backend Developer with 1 year of exprerience\",\n    \"salary\": 200000,\n    \"location\": \"Dhaka\",\n    \"role\": \"MERN Stack\",\n    \"job_type\": \"Full-time\",\n    \"work_location\": \"Remote\",\n    \"company_id\": 4,\n    \"openings\": 5,\n    \"is_active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost-job}}/api/job/3",
+              "host": [
+                "{{localhost-job}}"
+              ],
+              "path": [
+                "api",
+                "job",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-company-all",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost-job}}/api/job/company/all",
+              "host": [
+                "{{localhost-job}}"
+              ],
+              "path": [
+                "api",
+                "job",
+                "company",
+                "all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-company-details",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost-job}}/api/job/company/4",
+              "host": [
+                "{{localhost-job}}"
+              ],
+              "path": [
+                "api",
+                "job",
+                "company",
+                "4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-all-job",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost-job}}/api/job/all",
+              "host": [
+                "{{localhost-job}}"
+              ],
+              "path": [
+                "api",
+                "job",
+                "all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-single-job",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost-job}}/api/job/4",
+              "host": [
+                "{{localhost-job}}"
+              ],
+              "path": [
+                "api",
+                "job",
+                "4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all application recruiter",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost-job}}/api/job/application/5",
+              "host": [
+                "{{localhost-job}}"
+              ],
+              "path": [
+                "api",
+                "job",
+                "application",
+                "5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update application",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"status\": \"Hired\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost-job}}/api/job/application/update/6",
+              "host": [
+                "{{localhost-job}}"
+              ],
+              "path": [
+                "api",
+                "job",
+                "application",
+                "update",
+                "6"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "utils",
+      "item": [
+        {
+          "name": "career",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"skills\": \"React.js, Node.js, MongoDB, Express.js\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost-utils}}/api/utils/career",
+              "host": [
+                "{{localhost-utils}}"
+              ],
+              "path": [
+                "api",
+                "utils",
+                "career"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "New Request",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "844d5895-bcd6-4272-bdc7-66041e36992f",
+                  "src": "/home/tanjil/Downloads/test.pdf"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{localhost-utils}}/api/utils/resume-analyser",
+              "host": [
+                "{{localhost-utils}}"
+              ],
+              "path": [
+                "api",
+                "utils",
+                "resume-analyser"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "payment",
+      "item": [
+        {
+          "name": "checkout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"days\":2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost-payment}}/api/payment/checkout",
+              "host": [
+                "{{localhost-payment}}"
+              ],
+              "path": [
+                "api",
+                "payment",
+                "checkout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "verify",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"val_id\": \"2603252102446ngfH3YNS6MpqGx\",\n    \"tran_id\": \"SUB_4_1774450955782_p156lh\",\n    \"status\": \"VALID\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{localhost-payment}}/api/payment/verify",
+              "host": [
+                "{{localhost-payment}}"
+              ],
+              "path": [
+                "api",
+                "payment",
+                "verify"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{localhost-payment}}/api/payment/transaction/SUB_4_1774458602752_e57rb8",
+              "host": [
+                "{{localhost-payment}}"
+              ],
+              "path": [
+                "api",
+                "payment",
+                "transaction",
+                "SUB_4_1774458602752_e57rb8"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "localhost-auth",
+      "value": ""
+    },
+    {
+      "key": "localhost-user",
+      "value": ""
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "localhost-job",
+      "value": ""
+    },
+    {
+      "key": "localhost-utils",
+      "value": ""
+    },
+    {
+      "key": "localhost-payment",
+      "value": ""
+    }
+  ]
+}
