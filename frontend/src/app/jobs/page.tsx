@@ -184,7 +184,7 @@ const JobsPage = () => {
                 </Label>
                 <Select value={location} onValueChange={(e) => setLocation(e)}>
                   <SelectTrigger className="w-full pl-10 h-11 border-2  border-gray-300 rounded-md bg-transparent">
-                    <SelectValue placeholder="Select your role" />
+                    <SelectValue placeholder="Select your location" />
                   </SelectTrigger>
                   <SelectContent>
                     {/* <SelectItem value="jobseeker">Find a job</SelectItem>

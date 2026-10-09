@@ -1,31 +1,53 @@
-session_name: job-portal
+session_name: job-portal-dev
+attach: true
+
 start_directory: ~/Developer/job-portal
+
 windows:
   - window_name: frontend
     start_directory: frontend
     panes:
-      - echo "📁 Frontend - Ready"
+      - shell_command:
+          - echo "📁 Frontend Ready"
+          - npm run dev
+
   - window_name: auth
     start_directory: services/auth
     panes:
-      - echo "🔐 Auth - Ready"
+      - shell_command:
+          - echo "🔐 Auth Ready"
+          - npm run dev
+
   - window_name: job
     start_directory: services/job
     panes:
-      - echo "💼 Job - Ready"
+      - shell_command:
+          - echo "💼 Job Ready"
+          - npm run dev
+
   - window_name: user
     start_directory: services/user
     panes:
-      - echo "👤 User - Ready"
+      - shell_command:
+          - echo "👤 User Ready"
+          - npm run dev
+
   - window_name: utils
     start_directory: services/utils
     panes:
-      - echo "🛠️ Utils - Ready"
+      - shell_command:
+          - echo "🛠 Utils Ready"
+          - npm run dev
+
   - window_name: payment
     start_directory: services/payment
     panes:
-      - echo "💰️ payment - Ready"
+      - shell_command:
+          - echo "💰 Payment Ready"
+          - npm run dev
+
   - window_name: root
     start_directory: .
     panes:
-      - echo "📂 Root - Ready"
+      - shell_command:
+          - echo "📂 Root Ready"
