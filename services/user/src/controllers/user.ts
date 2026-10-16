@@ -67,7 +67,7 @@ export const userUpdateProfilePic = TryCatch(
       throw new ErrorHandler(500, "Failed to process image file");
     }
     const { data: uploadResult } = await axios.post(
-      `${process.env.UPLOAD_SERVICE_URL}/api/utils/upload`,
+      `${process.env.UPLOAD_SERVICE}/api/utils/upload`,
       {
         buffer: fileBuffer.content,
         public_id: oldPublicId,
@@ -102,7 +102,7 @@ export const userUpdateResume = TryCatch(
       throw new ErrorHandler(500, "Failed to process image file");
     }
     const { data: uploadResult } = await axios.post(
-      `${process.env.UPLOAD_SERVICE_URL}/api/utils/upload`,
+      `${process.env.UPLOAD_SERVICE}/api/utils/upload`,
       {
         buffer: fileBuffer.content,
         public_id: oldPublicId,

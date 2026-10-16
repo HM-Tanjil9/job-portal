@@ -4,7 +4,6 @@ services:
     container_name: kafka
     ports:
       - "9092:9092"
-
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
@@ -21,7 +20,10 @@ services:
       context: ./services/auth
     container_name: job-auth
     env_file:
-      - ./services/auth/.env
+      - ./.env
+    environment:
+      PORT: "5001"
+      NODE_OPTIONS: "--dns-result-order=ipv4first --no-network-family-autoselection"
     ports:
       - "5001:5001"
     depends_on:
@@ -32,7 +34,10 @@ services:
       context: ./services/user
     container_name: job-user
     env_file:
-      - ./services/user/.env
+      - ./.env
+    environment:
+      PORT: "5003"
+      NODE_OPTIONS: "--dns-result-order=ipv4first --no-network-family-autoselection"
     ports:
       - "5003:5003"
     depends_on:
@@ -43,7 +48,10 @@ services:
       context: ./services/job
     container_name: job-job
     env_file:
-      - ./services/job/.env
+      - ./.env
+    environment:
+      PORT: "5002"
+      NODE_OPTIONS: "--dns-result-order=ipv4first --no-network-family-autoselection"
     ports:
       - "5002:5002"
     depends_on:
@@ -54,7 +62,10 @@ services:
       context: ./services/utils
     container_name: job-utils
     env_file:
-      - ./services/utils/.env
+      - ./.env
+    environment:
+      PORT: "5004"
+      NODE_OPTIONS: "--dns-result-order=ipv4first --no-network-family-autoselection"
     ports:
       - "5004:5004"
     depends_on:
@@ -65,7 +76,10 @@ services:
       context: ./services/payment
     container_name: job-payment
     env_file:
-      - ./services/payment/.env
+      - ./.env
+    environment:
+      PORT: "3030"
+      NODE_OPTIONS: "--dns-result-order=ipv4first --no-network-family-autoselection"
     ports:
       - "3030:3030"
 
