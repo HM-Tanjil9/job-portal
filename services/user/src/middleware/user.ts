@@ -30,9 +30,14 @@ export const isAuth = async (
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       res.status(401).json({ message: "Authorization header missing" });
+      return;
     }
 
-    const token = authHeader?.split(" ")[1];
+    const token = authHeader.slice(7).trim();
+    if (!token) {
+      res.status(401).json({ message: "Invalid token" });
+      return;
+    }
     const decodedPayload = jwt.verify(
       token as string,
       process.env.JWT_SECRET as string,
