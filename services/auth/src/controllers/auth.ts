@@ -7,7 +7,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { forgotPasswordTemplate } from "../utils/templete.js";
 import { publishToTopic } from "../producer.js";
-import { redisClient } from "../index.js";
+import { redisClient } from "../utils/redis.js";
 
 export const registerUser = TryCatch(async (req, res, next) => {
   const { name, email, password, phoneNumber, role, bio } = req.body;
